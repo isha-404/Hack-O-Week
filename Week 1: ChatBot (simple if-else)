@@ -1,0 +1,46 @@
+# Week 1 Basic FAQ Responder Chatbot
+
+def chatbot(user_input):
+    user_input = user_input.lower()
+
+    if "timing" in user_input or "hours" in user_input:
+        return "The institute operates from 9 AM to 5 PM, Monday to Friday."
+
+    elif "fees" in user_input or "fee structure" in user_input:
+        return "The fee structure details are available on the institute website."
+
+    elif "admission" in user_input:
+        return "Admissions are based on entrance exams and merit lists."
+
+    elif "courses" in user_input:
+        return "We offer courses in Computer Science, AI-ML, ECE, and Mechanical Engineering."
+
+    elif "hostel" in user_input:
+        return "Hostel facilities are available for both boys and girls."
+
+    elif "contact" in user_input or "phone" in user_input:
+        return "You can contact the institute at +91-XXXXXXXXXX."
+
+    elif "location" in user_input or "address" in user_input:
+        return "The institute is located in Pune, Maharashtra."
+
+    elif "exam" in user_input:
+        return "Semester exams are conducted at the end of each term."
+
+    elif "library" in user_input:
+        return "The library is open from 9 AM to 8 PM."
+
+    elif "placement" in user_input:
+        return "The institute has a dedicated placement cell with good industry tie-ups."
+
+    else:
+        return "Sorry, I couldn't understand your question. Please ask something else."
+
+print("FAQ Chatbot (Type 'exit' to quit)")
+while True:
+    user_question = input("You: ")
+    if user_question.lower() == "exit":
+        print("Chatbot: Thank you! Have a nice day.")
+        break
+    response = chatbot(user_question)
+    print("Chatbot:", response)
