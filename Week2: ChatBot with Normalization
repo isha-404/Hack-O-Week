@@ -1,0 +1,82 @@
+import re
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+
+nltk.download('punkt')
+nltk.download('stopwords')
+
+#stopwords
+STOP_WORDS = set(stopwords.words('english'))
+
+# dictionary
+SPELLING_NORMALIZATION = {
+    "pls": "please",
+    "plz": "please",
+    "u": "you",
+    "ur": "your",
+    "thx": "thanks",
+    "tnx": "thanks",
+    "whats": "what"
+}
+
+def normalize_spelling(tokens):
+    return [SPELLING_NORMALIZATION.get(word, word) for word in tokens]
+
+def preprocess_text(text):
+
+    # Lowercase, Remove punctuation, Tokenization, Stopword, normalization
+
+    text = text.lower()
+    text = re.sub(r"[^a-zA-Z\s]", "", text)
+    tokens = word_tokenize(text)
+    tokens = [word for word in tokens if word not in STOP_WORDS]
+    tokens = normalize_spelling(tokens)
+
+    return tokens
+
+
+# knowledge
+RESPONSES = {
+    "exam": "The exam will be held next Monday.",
+    "syllabus": "The syllabus is available on the student portal.",
+    "attendance": "Attendance above 75% is mandatory.",
+    "fees": "The fee details are available in the accounts office.",
+    "assignment": "The assignment deadline is Friday.",
+    "hello": "Hello! How can I help you?",
+    "timetable": "The timetable is available on the notice board and website.",
+    "results": "The results will be announced next week.",
+    "library": "The library is open from 9 AM to 6 PM.",
+    "hostel": "Hostel details can be obtained from the hostel office.",
+    "holiday": "The holiday list is available on the college website.",
+    "placement": "Placement training starts from next month.",
+    "internship": "Internship details will be shared by the department.",
+    "project": "Final year project guidelines are provided by the faculty.",
+    "revaluation": "Revaluation forms are available in the examination cell.",
+    "certificate": "Certificates can be collected from the admin office.",
+    "bus": "College bus timings are displayed at the transport office.",
+    "id": "Apply for a new ID card at the administration office.",
+    "thanks": "You're welcome! Feel free to ask more questions.",
+    "admission": "Admission details are available at the college admission office."
+
+
+}
+
+def chatbot_response(user_input):
+    tokens = preprocess_text(user_input)
+
+    for key in RESPONSES:
+        if key in tokens:
+            return RESPONSES[key]
+
+    return "Sorry, I couldn't understand your question. Please ask differently."
+
+print("Student Chatbot (type 'exit' to quit)")
+while True:
+    user_input = input("You: ")
+    if user_input.lower() == "exit":
+        print("Bot: Goodbye!")
+        break
+
+    response = chatbot_response(user_input)
+    print("Bot:", response)
