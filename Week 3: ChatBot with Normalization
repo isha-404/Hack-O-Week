@@ -1,0 +1,59 @@
+import re
+
+SYNONYMS = {
+    "test": "exam", "quiz": "exam", "midterm": "exam", "finals": "exam",
+    "tuition": "fees", "cost": "fees", "pay": "fees", "price": "fees", "scholarship": "fees",
+    "location": "address", "where": "address", "map": "address", "direction": "address",
+    "timing": "hours", "time": "hours", "schedule": "hours", "open": "hours", "close": "hours",
+    "contact": "help", "phone": "help", "call": "help", "email": "help", "support": "help",
+    "hostel": "housing", "dorm": "housing", "stay": "housing", "accommodation": "housing",
+    "classes": "subjects", "branch": "subjects", "major": "subjects", "degree": "subjects",
+    "hi": "hello", "hey": "hello", "sup": "hello", "morning": "hello", "bye": "goodbye",
+    "exit": "goodbye", "quit": "goodbye"
+}
+
+RESPONSES = {
+    "exam": "Exams start next Monday. Check the notice board for your specific hall ticket.",
+    "fees": "The annual fee is $5000. You can pay via the portal or at the admin desk.",
+    "address": "We are located at 123 University Lane, Pune. You can find us on Google Maps.",
+    "hours": "The institute is open from 9 AM to 5 PM, Monday through Saturday.",
+    "help": "You can reach the helpdesk at +91-1234567890 or email support@institute.edu.",
+    "housing": "Hostels are available for both boys and girls with 24/7 security and Wi-Fi.",
+    "subjects": "We offer specializations in AI, Data Science, Cyber Security, and Robotics.",
+    "hello": "Hello! I'm your student assistant. How can I help you today?",
+    "goodbye": "Goodbye! Feel free to come back anytime you have questions."
+}
+
+def chatbot_response(user_input):
+    text = user_input.lower()
+    words = re.sub(r"[^a-z\s]", "", text).split()
+    
+    # Collect all matching topics
+    matched_topics = set()
+    for word in words:
+        clean_word = SYNONYMS.get(word, word)
+        if clean_word in RESPONSES:
+            matched_topics.add(clean_word)
+    
+    # Handle goodbye
+    if "goodbye" in matched_topics:
+        return RESPONSES["goodbye"], True
+    
+    # Return all relevant responses
+    if matched_topics:
+        responses = [RESPONSES[topic] for topic in matched_topics]
+        return "\n\n".join(responses), False
+    
+    return "I'm not sure about that. Try asking about exams, fees, timings, or hostel facilities.", False
+
+print("Bot: Hello! I'm your student assistant. Type 'exit' or 'bye' to quit.")
+while True:
+    msg = input("You: ")
+    if not msg.strip():
+        continue
+    
+    response, should_exit = chatbot_response(msg)
+    print("Bot:", response)
+    
+    if should_exit:
+        break
