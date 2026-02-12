@@ -1,0 +1,124 @@
+import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+class UniversityChatbot:
+    def __init__(self, faq_data, threshold=0.2):
+        """
+        faq_data: list of dictionaries with 'question' and 'answer'
+        threshold: minimum similarity required to return an answer
+        """
+        self.faq_data = faq_data
+        self.threshold = threshold
+        
+        self.questions = [item['question'] for item in faq_data]
+        
+        self.vectorizer = TfidfVectorizer(stop_words='english')
+        
+        self.tfidf_matrix = self.vectorizer.fit_transform(self.questions)
+
+    def get_response(self, user_query):
+        query_vector = self.vectorizer.transform([user_query])
+        
+        similarities = cosine_similarity(query_vector, self.tfidf_matrix)
+        
+        best_index = np.argmax(similarities)
+        best_score = similarities[0][best_index]
+
+        #print("Similarity Score:", best_score)
+
+        
+        if best_score >= self.threshold:
+            return self.faq_data[best_index]['answer']
+        else:
+            return "I'm sorry, I couldn't find relevant information. Please contact the administration office."
+
+
+faq_data = [
+    {
+        "question": "What are the admission requirements?",
+        "answer": "You need to submit your transcripts, entrance exam scores, and a statement of purpose."
+    },
+    {
+        "question": "How can I apply for scholarships?",
+        "answer": "Scholarship applications are available on the university portal under the financial aid section."
+    },
+    {
+        "question": "What is the fee structure?",
+        "answer": "The fee structure varies by program. Please visit the official website for detailed information."
+    },
+    {
+        "question": "Where is the university located?",
+        "answer": "The university is located in downtown City Center near the central metro station."
+    },
+    {
+        "question": "What courses are offered?",
+        "answer": "We offer undergraduate and postgraduate programs in Engineering, Business, Arts, and Sciences."
+    },
+    {
+        "question": "When does the admission process start?",
+        "answer": "The admission process begins in March for the Fall semester and October for the Spring semester."
+    },
+     {
+        "question": "Is there an entrance exam?",
+        "answer": "Yes, some programs require an entrance examination. Please check the program-specific requirements."
+    },
+      {
+        "question": "Can international students apply?",
+        "answer": "Yes, international students are welcome and must provide valid passport and English proficiency test scores."
+    },
+     {
+        "question": "How can I pay my tuition fees?",
+        "answer": "Tuition fees can be paid online via the student portal using debit card, credit card, or bank transfer."
+    },
+     {
+        "question": "How do I register for courses?",
+        "answer": "Course registration can be completed through the student portal during the registration period."
+    },
+     {
+        "question": "Does the university provide hostel facilities?",
+        "answer": "Yes, on-campus hostel facilities are available for both male and female students."
+    },
+    {
+        "question": "Is there a library on campus?",
+        "answer": "Yes, the university library is open from 8 AM to 10 PM on weekdays."
+    },
+    {
+        "question": "Are sports facilities available?",
+        "answer": "Yes, the campus includes a gym, football ground, basketball court, and indoor sports complex."
+    },
+    {
+        "question": "Is Wi-Fi available on campus?",
+        "answer": "Yes, free high-speed Wi-Fi is available across the campus."
+    },
+     {
+        "question": "How can I get my student ID card?",
+        "answer": "Student ID cards are issued by the administration office after enrollment confirmation."
+    },
+    {
+        "question": "What are the office hours?",
+        "answer": "Administrative offices are open from 9 AM to 5 PM, Monday to Friday."
+    },
+    {
+        "question": "How can I contact the administration?",
+        "answer": "You can contact the administration via email or visit the administrative block during office hours."
+    },
+    {
+        "question": "Is medical assistance available on campus?",
+        "answer": "Yes, a medical center with basic healthcare facilities is available on campus."
+    }
+]
+
+chatbot = UniversityChatbot(faq_data)
+
+print("University Chatbot (type 'exit' to quit)\n")
+
+while True:
+    user_input = input("Student: ")
+    
+    if user_input.lower() == "exit":
+        print("Chatbot: Goodbye!")
+        break
+    
+    response = chatbot.get_response(user_input)
+    print("Chatbot:", response)
