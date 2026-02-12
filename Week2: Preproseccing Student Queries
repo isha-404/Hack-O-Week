@@ -1,0 +1,39 @@
+import string
+
+# Basic stopwords list
+stopwords = ["is", "am", "are", "the", "a", "an", "of", "to", "in", "on", "for", "and"]
+
+# Basic spelling normalization dictionary
+spelling_normalization = {
+    "teh": "the",
+    "studant": "student",
+    "quesion": "question",
+    "examz": "exams"
+}
+
+def preprocess_text(text):
+    # 1. Lowercasing
+    text = text.lower()
+
+    # 2. Punctuation handling (remove punctuation)
+    text = text.translate(str.maketrans("", "", string.punctuation))
+
+    # 3. Tokenization
+    tokens = text.split()
+
+    # 4. Basic spelling normalization
+    tokens = [spelling_normalization.get(word, word) for word in tokens]
+
+    # 5. Stopwords removal
+    tokens = [word for word in tokens if word not in stopwords]
+
+    return tokens
+
+# Input from student
+question = input("Enter student question: ")
+
+# Preprocess the question
+processed_tokens = preprocess_text(question)
+
+# Output
+print("Processed Tokens:", processed_tokens)
