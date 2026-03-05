@@ -1,0 +1,51 @@
+import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.pipeline import Pipeline
+
+data = {
+    "admission": ["apply for college", "admission process", "enrollment"],
+    "exams": ["test schedule", "when are finals", "exam dates"],
+    "hostel": ["room availability", "dorm fees", "hostel stay"]
+}
+
+X_train, y_train = [], []
+for intent, phrases in data.items():
+    for phrase in phrases:
+        X_train.append(phrase)
+        y_train.append(intent)
+
+model = Pipeline([
+    ('tfidf', TfidfVectorizer()),
+    ('clf', MultinomialNB()),
+])
+model.fit(X_train, y_train)
+
+def get_response_with_fallback(user_input):
+
+    probs = model.predict_proba([user_input])
+    max_prob = np.max(probs) # How confident the bot is (0.0 to 1.0)
+    
+    if max_prob < 0.4:
+
+        fallback_msg = (
+            "I'm sorry, I'm not quite sure I understand your request.\n"
+            "• You can try asking about: Admissions, Exams, or Hostels.\n"
+            "• Or, contact a human advisor: helpdesk@university.edu\n"
+            "• Visit the Admin Office: Room 101, Main Block."
+        )
+        return fallback_msg
+    
+    intent = model.predict([user_input])[0]
+    responses = {
+        "admission": "Admissions are open until July! Apply at www.uni.edu/apply",
+        "exams": "Final exams start on May 15th. Check your portal for the hall ticket.",
+        "hostel": "Hostel registration is now open for the new semester."
+    }
+    return f"[Bot]: {responses[intent]} (Confidence: {max_prob:.2f})"
+
+print("University Support Bot (Type 'exit' to quit)")
+while True:
+    user_query = input("\nStudent: ")
+    if user_query.lower() == 'exit': break
+    print(get_response_with_fallback(user_query))
