@@ -1,0 +1,51 @@
+#include <EEPROM.h>
+
+int sensorPin = 2;
+int relayPin = 8;
+
+int inventory;
+int addr = 0;
+
+void setup() {
+
+  pinMode(sensorPin, INPUT_PULLUP);
+  pinMode(relayPin, OUTPUT);
+
+  Serial.begin(9600);
+
+  inventory = EEPROM.read(addr);
+
+  if(inventory == 255){
+    inventory = 10;
+    EEPROM.write(addr, inventory);
+  }
+
+  Serial.print("Inventory: ");
+  Serial.println(inventory);
+}
+
+void loop() {
+
+  if(digitalRead(sensorPin) == LOW && inventory > 0){
+
+    Serial.println("Hand detected!");
+
+    digitalWrite(relayPin, HIGH);
+    delay(1000);
+    digitalWrite(relayPin, LOW);
+
+    inventory--;
+
+    EEPROM.write(addr, inventory);
+
+    Serial.print("Remaining items: ");
+    Serial.println(inventory);
+
+    delay(1500);
+  }
+
+  if(inventory == 0){
+    Serial.println("Out of stock!");
+    delay(2000);
+  }
+}
