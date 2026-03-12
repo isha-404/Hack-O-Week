@@ -1,0 +1,47 @@
+#define PING_PIN 9
+#define BUZZER_PIN 8
+#define MOTOR_PIN 6
+
+long duration;
+float distance;
+
+void setup() {
+  pinMode(BUZZER_PIN, OUTPUT);
+  pinMode(MOTOR_PIN, OUTPUT);
+  Serial.begin(9600);
+  Serial.println("=====================================");
+  Serial.println("  Forklift Safety System Started!");
+  Serial.println("=====================================");
+}
+
+void loop() {
+  pinMode(PING_PIN, OUTPUT);
+  digitalWrite(PING_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(PING_PIN, HIGH);
+  delayMicroseconds(5);
+  digitalWrite(PING_PIN, LOW);
+
+  pinMode(PING_PIN, INPUT);
+  duration = pulseIn(PING_PIN, HIGH);
+  distance = (duration * 0.034) / 2;
+
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  if (distance <= 200 && distance > 0) {
+    digitalWrite(BUZZER_PIN, HIGH);
+    digitalWrite(MOTOR_PIN, LOW);
+    Serial.println(">> ALERT! Pedestrian Detected!");
+    Serial.println(">> Motor STOPPED for safety!");
+    Serial.println("-----------------------------");
+  } else {
+    digitalWrite(BUZZER_PIN, LOW);
+    digitalWrite(MOTOR_PIN, HIGH);
+    Serial.println(">> All Clear - Motor Running");
+    Serial.println("-----------------------------");
+  }
+
+  delay(500);
+}
