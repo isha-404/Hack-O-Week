@@ -1,0 +1,39 @@
+#include <Servo.h>
+
+Servo doorServo;
+
+int buttonPin = 2;
+int buttonState = 0;
+int lastButtonState = 0;
+
+void setup() {
+  Serial.begin(9600);
+
+  pinMode(buttonPin, INPUT);
+
+  doorServo.attach(9);
+  doorServo.write(0); // door closed
+
+  Serial.println("System Ready");
+}
+
+void loop() {
+
+  buttonState = digitalRead(buttonPin);
+
+  // Detect button press (LOW -> HIGH)
+  if (buttonState == HIGH && lastButtonState == LOW) {
+
+    Serial.println("Button Pressed");
+    Serial.println("Door Opening");
+
+    doorServo.write(90);
+    delay(4000);
+
+    Serial.println("Door Closing");
+
+    doorServo.write(0);
+  }
+
+  lastButtonState = buttonState;
+}
