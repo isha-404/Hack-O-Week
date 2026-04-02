@@ -1,0 +1,35 @@
+#include <LiquidCrystal_I2C.h>
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+const int sensorPin = 2;
+int count = 0;
+bool lastState = HIGH;
+
+void setup() {
+  pinMode(sensorPin, INPUT_PULLUP);
+
+  lcd.init();
+  lcd.backlight();
+
+  lcd.setCursor(0, 0);
+  lcd.print("Object Counter");
+}
+
+void loop() {
+  bool currentState = digitalRead(sensorPin);
+
+  if (lastState == HIGH && currentState == LOW) {
+    count++;
+
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("Count:");
+    lcd.setCursor(0, 1);
+    lcd.print(count);
+
+    delay(200); // debounce
+  }
+
+  lastState = currentState;
+}
